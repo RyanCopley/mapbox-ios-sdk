@@ -74,6 +74,8 @@ typedef enum : short {
 - (void)removeAnnotation:(RMAnnotation *)annotation;
 
 - (void)removeAllObjects;
+@property (nonatomic, strong) NSString* clusterIdentifier;
+
 
 // Returns all annotations that are either inside of or intersect with boundingBox
 - (NSArray *)annotationsInProjectedRect:(RMProjectedRect)boundingBox;
@@ -82,5 +84,6 @@ typedef enum : short {
                withProjectedClusterSize:(RMProjectedSize)clusterSize
           andProjectedClusterMarkerSize:(RMProjectedSize)clusterMarkerSize
                       findGravityCenter:(BOOL)findGravityCenter;
+
 
 @end

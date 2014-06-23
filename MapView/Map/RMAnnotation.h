@@ -37,7 +37,7 @@
 {
     CLLocationCoordinate2D coordinate;
     NSString *title;
-
+    
     CGPoint position;
     RMProjectedPoint projectedLocation;
     RMProjectedRect  projectedBoundingBox;
@@ -54,6 +54,9 @@
     CGPoint   anchorPoint;
 }
 
+
+-(id)overlayLayerForMap:(RMMapView*)mapView;
+
 /** @name Configuration Basic Annotation Properties */
 
 /** The annotation's location on the map. */
@@ -64,6 +67,10 @@
 
 /** The annotation's subtitle. */
 @property (nonatomic, strong) NSString *subtitle;
+
+
+/** The annotation's cluster identifier. */
+@property (nonatomic, strong) NSString *clusterIdentifier;
 
 /** Storage for arbitrary data. */
 @property (nonatomic, strong) id userInfo;

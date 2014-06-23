@@ -171,26 +171,32 @@
                 if ( ! tileImage)
                 {
                     // fire off an asynchronous retrieval
-                    //
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void)
-                    {
-                        // ensure only one request for a URL at a time
-                        //
-                        @synchronized ([(RMAbstractWebMapSource *)_tileSource URLForTile:RMTileMake(x, y, zoom)])
-                        {
-                            // this will return quicker if cached since above attempt, else block on fetch
-                            //
-                            if (_tileSource.isCacheable && [_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[_mapView tileCache]])
-                            {
-                                dispatch_async(dispatch_get_main_queue(), ^(void)
+                    
+                    static NSOperationQueue *queue = nil;
+                    
+                    if (!queue) {
+                        queue = [NSOperationQueue new];
+                        queue.maxConcurrentOperationCount = 36;
+                    }
+                    [queue addOperationWithBlock:^(void)
+                     {
+                         // ensure only one request for a URL at a time
+                         //
+                         @synchronized ([(RMAbstractWebMapSource *)_tileSource URLForTile:RMTileMake(x, y, zoom)])
+                         {
+                             // this will return quicker if cached since above attempt, else block on fetch
+                             //
+                             if (_tileSource.isCacheable && [_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[_mapView tileCache]])
+                             {
+                                 dispatch_async(dispatch_get_main_queue(), ^(void)
                                 {
                                     // do it all again for this tile, next time synchronously from cache
                                     //
                                     [self.layer setNeedsDisplayInRect:rect];
                                 });
-                            }
-                        }
-                    });
+                             }
+                         }
+                     }];
                 }
             }
         }
@@ -213,7 +219,9 @@
                     float nextTileX = floor(nextX),
                           nextTileY = floor(nextY);
 
-                    tileImage = [_tileSource imageForTile:RMTileMake((int)nextTileX, (int)nextTileY, currentZoom) inCache:[_mapView tileCache]];
+                    RMTile t = RMTileMake((int)nextTileX, (int)nextTileY, (short)currentZoom);
+                    
+                    tileImage = [_tileSource imageForTile:t inCache:[_mapView tileCache]];
 
                     if (IS_VALID_TILE_IMAGE(tileImage))
                     {

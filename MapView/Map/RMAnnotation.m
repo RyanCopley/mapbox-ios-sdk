@@ -62,6 +62,7 @@
 @synthesize isClusterAnnotation=_isClusterAnnotation;
 @synthesize clusteredAnnotations;
 @synthesize isUserLocationAnnotation;
+@synthesize clusterIdentifier;
 
 + (instancetype)annotationWithMapView:(RMMapView *)aMapView coordinate:(CLLocationCoordinate2D)aCoordinate andTitle:(NSString *)aTitle
 {
@@ -87,7 +88,7 @@
     self.hasBoundingBox    = NO;
     self.enabled           = YES;
     self.clusteringEnabled = YES;
-
+    self.clusterIdentifier = @"DefaultCluster";
     self.isUserLocationAnnotation = NO;
 
     layer = nil;
@@ -97,7 +98,7 @@
 
 - (void)dealloc
 {
-    [[self.mapView quadTree] removeAnnotation:self];
+    [[self.mapView.quadTrees objectForKey:self.clusterIdentifier] removeAnnotation:self];
 }
 
 - (void)setCoordinate:(CLLocationCoordinate2D)aCoordinate
@@ -115,6 +116,8 @@
 - (void)setMapView:(RMMapView *)aMapView
 {
     mapView = aMapView;
+    
+    [self setCoordinate:self.coordinate];
 
     if (!aMapView)
         self.layer = nil;
@@ -149,7 +152,7 @@
 
          layer = nil;
     }
-
+    
     if (aLayer)
     {
         layer = aLayer;

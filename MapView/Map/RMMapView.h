@@ -309,6 +309,7 @@ typedef enum : NSUInteger {
 /** The annotations currently visible on the map. May include annotations currently shown in clusters. */
 @property (nonatomic, weak, readonly) NSArray *visibleAnnotations;
 
+- (UIView*) tiledLayersSuperview_DRY;
 /** Add an annotation to the map. 
 *   @param annotation The annotation to add. */
 - (void)addAnnotation:(RMAnnotation *)annotation;
@@ -350,7 +351,7 @@ typedef enum : NSUInteger {
 
 #pragma mark - TileSources
 
-@property (nonatomic, strong) RMQuadTree *quadTree;
+@property (nonatomic, strong) NSMutableDictionary *quadTrees;
 
 /** @name Configuring Annotation Clustering */
 
@@ -523,5 +524,6 @@ typedef enum : NSUInteger {
 *   @param mode The mode used to track the user location. 
 *   @param animated Whether changes to the map center or rotation should be animated when the mode is changed. */
 - (void)setUserTrackingMode:(RMUserTrackingMode)mode animated:(BOOL)animated;
+
 
 @end
